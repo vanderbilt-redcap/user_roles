@@ -8,9 +8,9 @@ var UserRoles = {
 		// console.log("pageIndex: " + pageIndex);
 		$.ajax({
 			data: {
-				"page": "ajax",
-				"function": "getDashboardItems",
-				"pageIndex": pageIndex
+				page: "ajax",
+				function: "getDashboardItems",
+				pageIndex: pageIndex
 			},
 			success: function(data){
 				console.log(data);
