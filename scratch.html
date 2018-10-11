@@ -1,0 +1,98 @@
+<table>
+	<thead>
+		<tr>
+			<th scope="col">PID</th>
+			<th scope="col">Name</th>
+			<th scope="col">Title</th>
+			<th scope="col">Notes</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			
+		</tr>
+	</tbody>
+</table>
+
+interesting headers for redcap dbs
+redcap_projects:
+	project_id
+	project_name
+	app_title
+	project_note
+redcap_user_rights:
+redcap_user_information:
+	ui_id
+	username
+	user_email
+	user_firstname
+	user_lastname
+	super_user
+redcap_user_roles:
+	project_id
+	role_id
+	role_name
+redcap_data_access_groups:
+	project_id
+	group_id
+	group_name
+
+SELECT projects.project_id,
+	projects.app_title,
+	projects.project_note,
+	roles.project_id,
+	roles.role_id,
+	roles.role_name,
+	dags.project_id,
+	dags.group_id,
+	dags.group_name
+FROM redcap_projects projects, redcap_user_roles roles, redcap_data_access_groups dags, redcap_user_rights users
+WHERE users.username = "site_admin" and users.project_id = projects.project_id and dags.project_id = projects.project_id and roles.project_id = projects.project_id
+ORDER BY projects.project_id
+
+SELECT projects.project_id, projects.app_title, projects.project_note, roles.role_name, dags.group_name
+FROM redcap_projects projects, redcap_user_roles roles, redcap_data_access_groups dags, redcap_user_rights users
+WHERE users.username = "carl" and users.project_id = roles.project_id
+ORDER BY projects.project_id
+
+// project ids for user
+SELECT projects.project_id
+FROM redcap_projects projects, redcap_user_rights users
+WHERE users.username = "carl" and users.project_id = projects.project_id
+ORDER BY projects.project_id
+
+SELECT p.online_offline, p.project_id, p.two_factor_exempt_project, p.project_note, p.project_name,	p.app_title, p.status, p.draft_mode, p.surveys_enabled, p.date_deleted, p.repeatforms
+	FROM redcap_user_rights u, redcap_projects p
+	WHERE u.project_id = p.project_id and u.username = \"$userid\""
+	ORDER BY p.project_id
+
+// get roles
+SELECT DISTINCT roles.project_id, roles.role_name
+FROM redcap_user_roles roles, redcap_projects projects, redcap_user_rights users, redcap_data_access_groups dags
+WHERE roles.project_id IN (
+	SELECT projects.project_id
+	FROM redcap_projects projects, redcap_user_rights users
+	WHERE users.username = "carl" and users.project_id = projects.project_id
+)
+ORDER BY roles.project_id
+
+SELECT DISTINCT roles.project_id, roles.role_name
+FROM redcap_user_roles roles, redcap_projects projects, redcap_user_rights users, redcap_data_access_groups dags
+WHERE roles.project_id IN (
+	SELECT projects.project_id
+	FROM redcap_projects projects, redcap_user_rights users
+	WHERE users.username = "carl" and users.project_id = projects.project_id
+)
+ORDER BY roles.project_id
+
+//roles
+(SELECT projects.project_id, projects.app_title, projects.project_note, roles.role_name
+FROM redcap_projects projects
+LEFT JOIN redcap_user_roles roles ON roles.project_id=projects.project_id
+WHERE projects.project_id=1)
+FULL OUTER JOIN
+(SELECT projects.project_id, projects.app_title, projects.project_note, dags.group_name
+FROM redcap_projects projects
+LEFT JOIN redcap_data_access_groups dags ON dags.project_id=projects.project_id
+WHERE projects.project_id=1)
+ORDER BY project_id

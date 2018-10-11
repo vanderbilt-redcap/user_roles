@@ -1,5 +1,6 @@
 $(function() {
-	// $('h3').text(decodeURIComponent(document.cookie));
+	$("[id=roleDetailsCard]").hide();
+	$("[id=projectDetailsCard]").hide();
 })
 
 var UserRoles = {
@@ -16,5 +17,27 @@ var UserRoles = {
 				console.log(data);
 			}
 		})
+	},
+	
+	toggleButton: function(btn) {
+		if ($(btn).attr("checked")) {
+			$(btn).attr("checked", null);
+			$(btn).css("font-weight", 400);
+			$(btn).removeClass('btn-primary');
+			// $(btn).closest('td').animate({backgroundColor: '#fff'}, 500)
+		} else {
+			$(btn).attr("checked", true);
+			$(btn).css("font-weight", 500);
+			$(btn).addClass('btn-primary');
+			// $(btn).closest('td').animate({backgroundColor: '#e0efff'}, 500)
+		}
+	},
+	
+	deselectAll: function(which) {
+		$("[name^='" + which + "'][checked]").each(function() {UserRoles.toggleButton(this)})
+	},
+	
+	selectAll: function(which) {
+		$("[name^='" + which + "']:not([checked])").each(function() {UserRoles.toggleButton(this)})
 	}
 }
