@@ -45,26 +45,54 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 	}
 	
 	public function makeProjectsTable() {
-		// get list of projects user has access to
-		$userid = USERID;
-		
+		$userid = "carl";
 		if (gettype($userid) != 'string') {
 			return "<p>Unable to determine USERID -- can't retrieve list of projects. Email carl.w.reed@vumc.org</p>";
 		}
 		
-		$sql = "SELECT p.online_offline, p.project_id, p.two_factor_exempt_project, p.project_note, p.project_name,	p.app_title, p.status, p.draft_mode, p.surveys_enabled, p.date_deleted, p.repeatforms
-			FROM redcap_user_rights u, redcap_projects p
-			WHERE u.project_id = p.project_id and u.username = \"$userid\"
-			ORDER BY p.project_id";
-		$q = db_query($sql);
+		// get list of projects user has access to
 		$projects = [];
-		while ($row = db_fetch_array($q)) {
-			$projects[] = [
-				"project_id" => $row['project_id'],
-				// "project_name" => $row['project_name'],
+		$pids = [];
+		$sql = file_get_contents($this->getUrl("sql/getProjects.sql"));
+		$sql = str_replace("[USERID]", $userid, $sql);
+		$query = db_query($sql);
+		while ($row = db_fetch_array($query)) {
+			$pids[] = $row['project_id'];
+			$pid = (int) $row['project_id'];
+			if (gettype($pid) != "integer") continue;
+			$projects[$pid] = [
+				"project_id" => $pid,
 				"app_title" => $row['app_title'],
 				"project_note" => $row['project_note'],
+				"roles" => [],
+				"dags" => []
 			];
+		}
+		
+		// get roles
+		$sql = file_get_contents($this->getUrl("sql/getRoles.sql"));
+		$sql = str_replace("[PID_LIST]", implode(", ", $pids), $sql);
+		$query = db_query($sql);
+		while ($row = db_fetch_array($query)) {
+			$pid = (int) $row['project_id'];
+			if (gettype($pid) == "integer") {
+				if (isset($projects[$pid])) {
+					$projects[$pid]["roles"][] = $row["role_name"];
+				}
+			}
+		}
+		
+		// get dags
+		$sql = file_get_contents($this->getUrl("sql/getDags.sql"));
+		$sql = str_replace("[PID_LIST]", implode(", ", $pids), $sql);
+		$query = db_query($sql);
+		while ($row = db_fetch_array($query)) {
+			$pid = (int) $row['project_id'];
+			if (gettype($pid) == "integer") {
+				if (isset($projects[$pid])) {
+					$projects[$pid]["dags"][] = $row["group_name"];
+				}
+			}
 		}
 		
 		// construct and return html -- search bar, table with project buttons
@@ -89,13 +117,14 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 			//  </tbody>
 		// </table>
 		
-		ob_start();
-		print_r($projects);
-		$temp = ob_get_contents();
-		ob_end_clean();
-		fwrite($this->log, $temp);
+		// // log?
+		// ob_start();
+		// print_r($projects);
+		// $temp = ob_get_contents();
+		// ob_end_clean();
+		// fwrite($this->log, $temp);
 		
-		// add table data (project buttons & info) to table
+		// add table data (project/dag/role buttons & info) to table
 		foreach ($projects as $index => $project) {
 			$pid = $project['project_id'];
 			$title = $project['app_title'];
@@ -112,8 +141,14 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 	}
 	
 	public function makeRolesTable() {
-		$html = "<table></table>";
-		return $html;
+		// search bar
+		// button for create new role
+		// button for delete role
+		// table start
+			// role 1
+			// role 2...
+		// table end
+			
 	}
 	
 	public function makeSelectTable($which) {
