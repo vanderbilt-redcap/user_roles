@@ -141,6 +141,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 	}
 	
 	public function makeRolesTable() {
+		$html = file_get_contents($this->getUrl("html/rolesTable.html"));
 		// search bar
 		// button for create new role
 		// button for delete role
@@ -148,7 +149,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 			// role 1
 			// role 2...
 		// table end
-			
+		return $html;
 	}
 	
 	public function makeSelectTable($which) {
