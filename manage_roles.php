@@ -1,63 +1,12 @@
 <?php
-// prepare then print html header
-$header = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "header.html");
-$header = str_replace("CSS_PATH-", APP_PATH_CSS, $header);
-$header = str_replace("MODULE_CSS_FILE", $module->getUrl('css/stylesheet.css'), $header);
-$header = str_replace("JS_PATH-", APP_PATH_JS, $header);
-$header = str_replace("MODULE_JS_FILE", $module->getUrl('js/userRoles.js'), $header);
-echo $header;
+$html = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "base.html");
 
-// prepare html body
-$body = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "body.html");
-	
-	// add hidden json data for roles
-	$rolesJson = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "dev" . DIRECTORY_SEPARATOR . "devRoles.json");
-	$body = str_replace("ROLES_DATA", $rolesJson, $body);
-	
-	// add roles table
-	$body = str_replace("ROLES", $module->makeRolesTable(), $body);
+// replace some contents in html head
+$html = str_replace("JS_PATH_", APP_PATH_JS . DIRECTORY_SEPARATOR, $html);
+$html = str_replace("MODULE_JS_FILE", $module->getUrl('js'. DIRECTORY_SEPARATOR .'userRoles.js'), $html);
 
-	// add role details panel
-	$details = "\n".file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "card.html");
-	$detailsTable = "\n".file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "roleDetails.html");
-	$details = str_replace("ID", "roleDetailsCard", $details);
-	$details = str_replace("CARD_HEADER", "Role Details", $details);
-	$details = str_replace("CARD_DESCRIPTION", "", $details);
-	$details = str_replace("CARD_CONTENTS", $detailsTable, $details);
-	$body = str_replace("ROLE_DETAILS", $details, $body);
+// insert json data for roles and projects -- client uses it to initialize interface for user
+$html = str_replace("ROLES_DATA", $module->getRolesData(), $html);
+$html = str_replace("PROJECTS_DATA", $module->getProjectsData(), $html);
 
-	// add projects table
-	$projects = "\n".file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "card.html");
-	$projects = str_replace("ID", "projectsCard", $projects);
-	$projects = str_replace("CARD_HEADER", "Project - DAG Access", $projects);
-	$projects = str_replace("CARD_DESCRIPTION", "Choose which DAGs of which projects the role should have access to", $projects);
-	$projects = str_replace("CARD_CONTENTS", $module->makeProjectsTable(), $projects);
-	$body = str_replace("PROJECTS", $projects, $body);
-
-	// add project details panel
-	$details = "\n".file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "card.html");
-	$details = str_replace("ID", "projectDetailsCard", $details);
-	$details = str_replace("CARD_HEADER", "Project Details", $details);
-	$body = str_replace("PROJECT_DETAILS", $details, $body);
-
-	// add dashboard select table to body
-	$dashboardAccess = "\n" . file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "card.html");
-	$dashboardAccess = str_replace("ID", "dashboardCard", $dashboardAccess);
-	$dashboardAccess = str_replace("CARD_HEADER", "Dashboard Access", $dashboardAccess);
-	$dashboardAccess = str_replace("CARD_DESCRIPTION", "Select the dashboard items this role should have access to", $dashboardAccess);
-	$dashboardAccess = str_replace("CARD_CONTENTS", $module->makeSelectTable('dashboard'), $dashboardAccess);
-	$body = str_replace("DASHBOARD_ACCESS", $dashboardAccess, $body);
-
-	// add report select table to body
-	$reportAccess = "\n" . file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "card.html");
-	$reportAccess = str_replace("ID", "reportCard", $reportAccess);
-	$reportAccess = str_replace("CARD_HEADER", "Report Access", $reportAccess);
-	$reportAccess = str_replace("CARD_DESCRIPTION", "Select the report items this role should have access to", $reportAccess);
-	$reportAccess = str_replace("CARD_CONTENTS", $module->makeSelectTable('report'), $reportAccess);
-	$body = str_replace("REPORT_ACCESS", $reportAccess, $body);
-
-// print body to doc
-echo $body;
-
-// print footer
-echo file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "footer.html");
+echo $html;
