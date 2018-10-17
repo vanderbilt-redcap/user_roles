@@ -1,10 +1,4 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-$rolesData = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "dev" . DIRECTORY_SEPARATOR . "devRoles.json");
-setcookie("customRolesModuleRolesData", $rolesData, time()+3600);
-
 // prepare then print html header
 $header = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "header.html");
 $header = str_replace("CSS_PATH-", APP_PATH_CSS, $header);
@@ -15,19 +9,21 @@ echo $header;
 
 // prepare html body
 $body = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "body.html");
-
+	
+	// add hidden json data for roles
+	$rolesJson = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "dev" . DIRECTORY_SEPARATOR . "devRoles.json");
+	$body = str_replace("ROLES_DATA", $rolesJson, $body);
+	
 	// add roles table
-	$roles = "\n".file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "card.html");
-	$roles = str_replace("ID", "rolesCard", $roles);
-	$roles = str_replace("CARD_HEADER", "Custom User Roles", $roles);
-	$roles = str_replace("CARD_DESCRIPTION", "Create a new user role or edit existing roles", $roles);
-	$roles = str_replace("CARD_CONTENTS", $module->makeRolesTable(), $roles);
-	$body = str_replace("ROLES", $roles, $body);
+	$body = str_replace("ROLES", $module->makeRolesTable(), $body);
 
 	// add role details panel
 	$details = "\n".file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "card.html");
+	$detailsTable = "\n".file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "roleDetails.html");
 	$details = str_replace("ID", "roleDetailsCard", $details);
 	$details = str_replace("CARD_HEADER", "Role Details", $details);
+	$details = str_replace("CARD_DESCRIPTION", "", $details);
+	$details = str_replace("CARD_CONTENTS", $detailsTable, $details);
 	$body = str_replace("ROLE_DETAILS", $details, $body);
 
 	// add projects table

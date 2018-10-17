@@ -10,16 +10,9 @@ $(function() {
 		$("#roleDetailsCard").hide(250)
 	})
 	
-	// set UserRoles.roles from data in cookie
-	function getCookie(name) {
-		var value = "; " + document.cookie
-		var parts = value.split("; " + name + "=")
-		if (parts.length == 2) return parts.pop().split(";").shift()
-	}
-	let data = getCookie('customRolesModuleRolesData')
-	data = data.replace(/\+/g, ' ')
-	data = decodeURIComponent(data)
-	UserRoles.roles = JSON.parse(data)
+	// read json data from hidden div into our UserRoles global obj
+	UserRoles.roles = JSON.parse($("#rolesData").html())
+	console.log(UserRoles.roles.Receptionist.projects[5].dags[0])
 	
 	// add role buttons to rolesCard
 	for (var role in UserRoles.roles) {
@@ -61,30 +54,35 @@ var UserRoles = {
 		// update which dag/roles/dashboard/reports are selected
 		
 		// also update role details panel
-		$("#roleDetailsCard div div p").html(""))
-		let details = `
-			<table>
-				<tr>
-					<th>Role Name:</th>
-					<td>
-						<h3></h3>
-					</td>
-				</tr>
-				<tr>
-					<th>Active:</th>
-					<td>
-						<input type="checkbox" class="form-control-lg" checked>
-					</td>
-				</tr>
-				<tr>
-					<th>External:</th>
-					<td>
-						<input type="checkbox">
-					</td>
-				</tr>
-			</table>
-		`
-		$("#roleDetailsCard div div div").html(details)
+		$("#roleDetailsCard div div p").html("")
+		let whichRole = $(btn).html()
+		// let details = `
+			// <table>
+				// <tr>
+					// <th>Role Name:</th>
+					// <td>
+						// <h3 id="roleNameHeader"></h3>
+					// </td>
+				// </tr>
+				// <tr>
+					// <th>Active:</th>
+					// <td>
+						// <input type="checkbox" class="form-control-lg" id="roleActiveBox">
+					// </td>
+				// </tr>
+				// <tr>
+					// <th>External:</th>
+					// <td>
+						// <input type="checkbox" id="roleExternalBox">
+					// </td>
+				// </tr>
+			// </table>
+		// `
+		// $("#roleDetailsCard div div div").html(details)
+		$("#roleNameHeader").html(whichRole)
+		// console.log("name: " + whichRole + ", active: " + String(UserRoles.roles[whichRole].active) + ", external: " + String(UserRoles.roles[whichRole].external))
+		UserRoles.roles[whichRole].active == true ? $("#roleActiveBox").attr('checked', true) : $("#roleActiveBox").attr('checked', null)
+		UserRoles.roles[whichRole].external == true ? $("#roleExternalBox").attr('checked', true) : $("#roleExternalBox").attr('checked', null)
 	},
 	
 	selectAll: function(which) {
