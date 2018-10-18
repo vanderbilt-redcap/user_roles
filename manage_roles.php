@@ -7,6 +7,10 @@ $html = str_replace("MODULE_JS_FILE", $module->getUrl('js'. DIRECTORY_SEPARATOR 
 
 // insert json data for roles and projects -- client uses it to initialize interface for user
 $html = str_replace("ROLES_DATA", $module->getRolesData(), $html);
-$html = str_replace("PROJECTS_DATA", $module->getProjectsData(), $html);
+
+// replace identifiers with report list, dashboard list, and project and user role table bodies
+$html = str_replace("PROJECTS_TABLE_BODY", $module->getProjectsTableBody(), $html);
+$html = str_replace("DASHBOARD_LIST", $module->getDashboardList(), $html);
+$html = str_replace("REPORT_LIST", $module->getReportList(), $html);
 
 echo $html;

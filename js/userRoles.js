@@ -15,6 +15,38 @@ $(function() {
 		`
 		$("#rolesDiv table tbody").append(tableRow)
 	}
+	
+	$("#rolesDiv").on("click", "td:nth-child(1)", function() {
+		// user clicked a role
+		console.log("role select")
+	})
+	
+	$("#projectsDiv").on("click", "td:nth-child(2)", function() {
+		// user clicked a project (in projects table)
+		console.log("project select")
+	})
+	
+	$("#projectsDiv").on("click", "td:nth-child(3)", function() {
+		// user clicked a role (in projects table)
+		console.log("role in projects select")
+	})
+	
+	$("#projectsDiv").on("click", "td:nth-child(4)", function() {
+		// user clicked a dag (in projects table)
+		console.log("dag select")
+	})
+	
+	$("#dashboardsDiv").on("click", "li", function() {
+		// user clicked a dashboard item
+		console.log("dashboard select")
+	})
+	
+	$("#reportsDiv").on("click", "li", function() {
+		// user clicked a report item
+		console.log("report select")
+	})
 })
 
-var UserRoles = {}
+var UserRoles = {
+	roles: {}
+}
