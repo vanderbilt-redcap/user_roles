@@ -17,12 +17,9 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		fclose($this->log);
 	}
 	
-	public function getDashboardList(){
-		$ret = "";
-		for ($i=1; $i<10; $i++) {
-			$ret .= "<li>Dashboard $i</li>\n";
-		}
-		return $ret;
+	public function getAllData(){
+		// dev test/mock data:
+		return file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "dev" . DIRECTORY_SEPARATOR . "allData.json");
 	}
 	
 	public function getProjectsTableBody(){
@@ -52,7 +49,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 			$pid = $row["project_id"];
 			
 			!isset($roles[$pid]) ? $roles[$pid] = [] : "";
-			$roles[$pid][] = $row["role_name"];
+			$roles[$pid][] = [$row["role_id"], $row["role_name"]];
 		}
 		
 		// get dags for each project
@@ -64,7 +61,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 			$pid = $row["project_id"];
 			
 			!isset($dags[$pid]) ? $dags[$pid] = [] : "";
-			$dags[$pid][] = $row["group_name"];
+			$dags[$pid][] = [$row["group_id"], $row["group_name"]];
 		}
 		
 		// construct html table
@@ -76,20 +73,17 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 			$projectDags = $dags[$pid];
 			$maxRows = max(count($projectRoles), count($projectDags));
 			
-			$firstRole = isset($projectRoles[0]) ? $projectRoles[0] : "(no roles)";
-			$firstDag = isset($projectDags[0]) ? $projectDags[0] : "(no data access groups)";
-			
-			$table .= "<tr>";
-			$table .= "<td>$pid</td>";
-			$table .= "<td>$title</td>";
-			$table .= "<td>$firstRole</td>";
-			$table .= "<td>$firstDag</td>";
-			$table .= "</tr>";
-			
-			for ($i=1; $i<$maxRows; $i++) {
-				$nextRole = isset($projectRoles[$i]) ? $projectRoles[$i] : "";
-				$nextDag = isset($projectDags[$i]) ? $projectDags[$i] : "";
-				$table .= "<tr><td></td><td></td><td>$nextRole</td><td>$nextDag</td></tr>";
+			for ($i=0; $i<$maxRows; $i++) {
+				$td1 = $i==0 ? "<td>$pid</td>" : "<td></td>";
+				$td2 = $i==0 ? "<td><button type=\"button\" class=\"btn\">$title</button></td>" : "<td></td>";
+				$td3 = isset($projectRoles[$i]) ? "<td roleid=\"" . $projectRoles[$i][0] . "\"><button type=\"button\" class=\"btn\">" . $projectRoles[$i][1] . "</button></td>" : "<td></td>";
+				$td4 = isset($projectDags[$i]) ? "<td dagid=\"" . $projectDags[$i][0] . "\"><button type=\"button\" class=\"btn\">" . $projectDags[$i][1] . "</button></td>" : "<td></td>";
+				$table .= "<tr>
+					$td1
+					$td2
+					$td3
+					$td4
+				</tr>";
 			}
 		}
 		
@@ -105,18 +99,5 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		// ob_end_clean();
 		
 		return $table;
-	}
-	
-	public function getReportList(){
-		$ret = "";
-		for ($i=1; $i<10;$i++) {
-			$ret .= "<li>Report $i</li>\n";
-		}
-		return $ret;
-	}
-	
-	public function getRolesData(){
-		// dev test/mock data:
-		return file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "dev" . DIRECTORY_SEPARATOR . "rolesData.json");
 	}
 }
