@@ -10,6 +10,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		fwrite($this->log, "starting log...\n");
 		
 		$this->dev = true;
+		fwrite($this->log, "getRolesData: " . $this->getRolesData() . "\n");
 	}
 	
 	public function __destruct() {
@@ -116,7 +117,30 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 	}
 	
 	public function getRolesData(){
+		// this function should return a json object that has all the information the interface needs to display roles and options
+		
 		// dev test/mock data:
-		return file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "dev" . DIRECTORY_SEPARATOR . "rolesData.json");
+		// return file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "dev" . DIRECTORY_SEPARATOR . "rolesData.json");
+		
+		// step 1: add dashboard item names
+		// $roles->
+		
+		
+		// ob_start();
+		// print_r(\REDCap::getData($this->masterPid));
+		// fwrite($this->log, ob_get_contents()."\n");
+		// ob_end_clean();
+		
+		// ob_start();
+		// $master = new \Project($this->masterPid);
+		// print_r($master->metadata['tab_access']['element_enum']);
+		// echo "\n";
+		// print_r($master->metadata['tab_access_2']['element_enum']);
+		// echo "\n";
+		// fwrite($this->log, ob_get_contents());
+		// ob_end_clean();
+		
+		// $roles->active = true;
+		// return json_encode($roles);
 	}
 }
