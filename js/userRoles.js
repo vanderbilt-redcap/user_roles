@@ -1,52 +1,145 @@
 $(function() {
 	// add json data to our global UserRoles object
-	UserRoles.roles = JSON.parse($("#rolesData").html())
+	// UserRoles.[customRoles, roles, dags, dashboards, reports]
+	UserRoles = JSON.parse($("#data").html())
 	
-	// initialize interface with newly stored roles information
+	UserRoles.templates = {
+		projectRow:`
+			<tr>
+				<td></td>
+				<td>
+					<div class="dd-container">
+						<button onclick="$(this).siblings('[class*=dd-content').toggle(100)" class="dd-header project-dd btn">Project <i style="padding-left: 8px" class="fas fa-caret-down"></i></button>
+						<div class="dd-content">
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="dd-container">
+						<button onclick="$(this).siblings('[class*=dd-content').toggle(100)" class="dd-header btn">(Unassigned)<i style="padding-left: 8px" class="fas fa-caret-down"></i></button>
+						<div class="dd-content">
+							<span>(Unassigned)</span>
+						</div>
+					</div>
+				</td>
+				<td>
+					<div class="dd-container">
+						<button onclick="$(this).siblings('[class*=dd-content').toggle(100)" class="dd-header btn">(Unassigned)<i style="padding-left: 8px" class="fas fa-caret-down"></i></button>
+						<div class="dd-content">
+							<span>(Unassigned)</span>
+						</div>
+					</div>
+				</td>
+			</tr>`,
+		projectList:""
+	}
+	
+	// // Project divs section for add/remove buttons
+	// build projectList template string
+	for (pid in UserRoles.projects){
+		UserRoles.templates.projectList += "<span>("+ pid + ") " + UserRoles.projects[pid].name + "</span>\n"
+	}
+	
+	UserRoles.addProjectRow = function(){
+		let projectRow = $(UserRoles.templates.projectRow)
+		// seed new row first dropdown with list of projects
+		projectRow.find(".dd-content").first().append(UserRoles.templates.projectList)
+		$("#projectsDiv").find("tbody").append(projectRow)
+	}
+	
+	UserRoles.removeProjectRow = function(){
+		// find selected row if exists
+		selectedRow = $("#projectsDiv tr.selected")
+		selectedRow.length > 0 ? selectedRow.first().remove() : $("#projectsDiv tr").last().remove()
+	}
+	
+	// add role table rows using provided hidden #data
 	var falseCheckbox = "<input type=\"checkbox\">"
 	var trueCheckbox = "<input type=\"checkbox\" checked>"
-	for (var role in UserRoles.roles) {
+	for (var role in UserRoles.customRoles) {
 		let tableRow = `
 		<tr>
-			<td>${role}</td>
-			<td>${UserRoles.roles[role].active ? trueCheckbox : falseCheckbox}</td>
-			<td>${UserRoles.roles[role].external ? trueCheckbox : falseCheckbox}</td>
+			<td><button type=\"button\" class=\"btn\">${role}</button></td>
+			<td>${UserRoles.customRoles[role].active ? trueCheckbox : falseCheckbox}</td>
+			<td>${UserRoles.customRoles[role].external ? trueCheckbox : falseCheckbox}</td>
 		</tr>
 		`
 		$("#rolesDiv table tbody").append(tableRow)
 	}
 	
-	$("#rolesDiv").on("click", "td:nth-child(1)", function() {
+	// add dashboard and report items
+	dashItems = UserRoles.dashboards.map(function(name, index) {return "<li><button dashboardid=\"" + index + "\" class=\"btn\" type=\"button\">" + name + "</button></li>"})
+	$("#dashboardsDiv ul").append(dashItems.join(''))
+	reportItems = UserRoles.reports.map(function(name, index) {return "<li><button reportid=\"" + index + "\" class=\"btn\" type=\"button\">" + name + "</button></li>"})
+	$("#reportsDiv ul").append(reportItems.join(''))
+	
+	// click handlers
+	$("#rolesDiv").on("click", "td:nth-child(1) button", function() {
 		// user clicked a role
 		console.log("role select")
 	})
 	
-	$("#projectsDiv").on("click", "td:nth-child(2)", function() {
-		// user clicked a project (in projects table)
-		console.log("project select")
+	// make report and dashboard items selectable
+	toggle = function() {$(this).hasClass('selected') ? $(this).removeClass('selected') : $(this).addClass('selected')}
+	$("#dashboardsDiv").on("click", "li button", toggle)
+	$("#reportsDiv").on("click", "li button", toggle)
+	$("#projectsDiv").on("click", "tr", function(){
+		// untoggle all project table rows except newly selected
+		$("#projectsDiv tr").removeClass('selected')
+		$(this).addClass('selected')
 	})
 	
-	$("#projectsDiv").on("click", "td:nth-child(3)", function() {
-		// user clicked a role (in projects table)
-		console.log("role in projects select")
+	// // dropdown logic:
+	// handle dropdown content clicking
+	$("body").on("click", ".dd-content *", function(){
+		// put project "(pid) title" text in dropdown button
+		ddButton = $(this).parent().siblings(".dd-header")
+		ddButton.html($(this).html() + "<i style=\"padding-left: 8px\" class=\"fas fa-caret-down\"></i>")
+		$(this).parent().toggle(100)
+		
+		// if project dropdown got altered, seed options for role and dag dropdowns
+		if (ddButton.is(".project-dd")) {
+			pid = ddButton.html().split('(')[1].split(')')[0]
+			project = UserRoles.projects[String(pid)]
+			
+			// switching projects so unassign current role/dag
+			$(ddButton.closest('tr').find(".dd-header")[1]).html("(Unassigned)<i style='padding-left: 8px' class='fas fa-caret-down'></i>")
+			$(ddButton.closest('tr').find(".dd-header")[2]).html("(Unassigned)<i style='padding-left: 8px' class='fas fa-caret-down'></i>")
+			
+			// seed dd options
+			roleDiv = ddButton.closest('tr').find(".dd-content")[1]
+			dagDiv = ddButton.closest('tr').find(".dd-content")[2]
+			if (project) {
+				roleContent = "<span>(Unassigned)</span>"
+				for (i=0; i<project.roles.length; i++) {
+					roleContent += "\n<span>" + UserRoles.roles[project.roles[String(i)]] + "</span>"
+				}
+				$(roleDiv).html(roleContent)
+				
+				dagContent = "<span>(Unassigned)</span>"
+				for (i=0; i<project.dags.length; i++) {
+					dagContent += "\n<span>" + UserRoles.dags[project.dags[String(i)]] + "</span>"
+				}
+				$(dagDiv).html(dagContent)
+			} else {
+				$(roleDiv).html("<span>(Unassigned)</span>")
+				$(dagDiv).html("<span>(Unassigned)</span>")
+			}
+		}
 	})
 	
-	$("#projectsDiv").on("click", "td:nth-child(4)", function() {
-		// user clicked a dag (in projects table)
-		console.log("dag select")
-	})
-	
-	$("#dashboardsDiv").on("click", "li", function() {
-		// user clicked a dashboard item
-		console.log("dashboard select")
-	})
-	
-	$("#reportsDiv").on("click", "li", function() {
-		// user clicked a report item
-		console.log("report select")
-	})
+	// close non-clicked dropdowns
+	window.onclick = function(event) {
+		divs = $(".dd-content")
+		for (i=0; i<divs.length; i++) {
+			// console.log($(divs[i]).closest(".dd-container"))
+			if (!$(divs[i]).closest(".dd-container").has(event.target).length > 0) {
+				$(divs[i]).hide(100)
+			}
+		}
+	}
 })
 
 var UserRoles = {
-	roles: {}
+	
 }

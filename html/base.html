@@ -3,18 +3,19 @@
 	<head>
 		<meta charset="UTF-8">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+		<link rel="stylesheet" href="STYLESHEET">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<script type="text/javascript" src="MODULE_JS_FILE"></script>
 		<title>Custom User Roles</title>
 	</head>
 	<body>
-		<p style="display: none" id="rolesData">ROLES_DATA</p>
+		<p style="display: none" id="data">DATA</p>
 		<div style="border-style: solid; border-width: 2px;" id="rolesDiv">
 			<h3>User Roles</h3>
-			<button type="button">Create</button>
-			<button type="button">Delete</button>
-			<button type="button">Rename</button>
-			<button type="button">Save Changes</button>
+			<button class="btn" type="button" onclick="">Create</button>
+			<button class="btn" type="button" onclick="">Delete</button>
+			<button class="btn" type="button" onclick="">Rename</button>
+			<button class="btn" type="button" onclick="">Save Changes</button>
 			<table>
 				<thead>
 					<tr>
@@ -28,31 +29,31 @@
 			</table>
 		</div>
 		<div style="border-style: solid; border-width: 2px;" id="projectsDiv">
-			<h3>Projects</h3>
+			<h3>Project Access</h3>
+			<button type="button" class="btn" onclick="UserRoles.addProjectRow()">Add</button>
+			<button type="button" class="btn" onclick="UserRoles.removeProjectRow()">Remove</button>
 			<table>
 				<thead>
 					<tr>
 						<th>PID</th>
-						<th>Title</th>
+						<th>Project Title</th>
 						<th>Roles</th>
 						<th>Data Access Groups</th>
 					</tr>
 				</thead>
 				<tbody>
-					PROJECTS_TABLE_BODY
 				</tbody>
 			</table>
+			<!-- <span id="noProjectsSpan">(No projects defined)</span> -->
 		</div>
 		<div style="border-style: solid; border-width: 2px;" id="dashboardsDiv">
 			<h3>Dashboard Access</h3>
 			<ul>
-				DASHBOARD_LIST
 			</ul>
 		</div>
 		<div style="border-style: solid; border-width: 2px;" id="reportsDiv">
 			<h3>Report Access</h3>
 			<ul>
-				REPORT_LIST
 			</ul>
 		</div>
 	</body>

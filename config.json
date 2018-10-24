@@ -28,7 +28,11 @@
 
 	"links": {
 		"project": [
-
+			{
+				"name": "Manage User Roles",
+				"icon": "report",
+				"url": "manage_roles.php"
+			}
 		],
 		"control-center": [
 			{
