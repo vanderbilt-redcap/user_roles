@@ -31,7 +31,8 @@
 			{
 				"name": "Manage User Roles",
 				"icon": "report",
-				"url": "manage_roles.php"
+				"url": "manage_roles.php",
+				"access": "design"
 			}
 		],
 		"control-center": [
@@ -52,7 +53,13 @@
 	],
 
 	"system-settings": [
-
+		{
+			"key": "master-pid",
+			"name": "User Roles Master Project ID",
+			"required": true,
+			"type": "project-id",
+			"repeatable": false
+		}
 	],
 
 	"crons": [

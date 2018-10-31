@@ -49,8 +49,8 @@ $(function() {
 	
 	UserRoles.removeProjectRow = function(){
 		// find selected row if exists
-		selectedRow = $("#projectsDiv tr.selected")
-		selectedRow.length > 0 ? selectedRow.first().remove() : $("#projectsDiv tr").last().remove()
+		selectedRow = $("#projectsDiv tbody tr.selected")
+		selectedRow.length > 0 ? selectedRow.first().remove() : $("#projectsDiv tbody tr").last().remove()
 	}
 	
 	// add role table rows using provided hidden #data
@@ -83,9 +83,9 @@ $(function() {
 	toggle = function() {$(this).hasClass('selected') ? $(this).removeClass('selected') : $(this).addClass('selected')}
 	$("#dashboardsDiv").on("click", "li button", toggle)
 	$("#reportsDiv").on("click", "li button", toggle)
-	$("#projectsDiv").on("click", "tr", function(){
+	$("#projectsDiv").on("click", "tbody tr", function(){
 		// untoggle all project table rows except newly selected
-		$("#projectsDiv tr").removeClass('selected')
+		$("#projectsDiv tbody tr").removeClass('selected')
 		$(this).addClass('selected')
 	})
 	
