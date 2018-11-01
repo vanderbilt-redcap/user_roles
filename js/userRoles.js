@@ -1,3 +1,5 @@
+var UserRoles = {}
+
 $(function() {
 	// add json data to our global UserRoles object
 	// UserRoles.[customRoles, roles, dags, dashboards, reports]
@@ -9,7 +11,7 @@ $(function() {
 				<td></td>
 				<td>
 					<div class="dd-container">
-						<button onclick="$(this).siblings('[class*=dd-content').toggle(100)" class="dd-header project-dd btn">Project <i style="padding-left: 8px" class="fas fa-caret-down"></i></button>
+						<button onclick="$(this).siblings('[class*=dd-content').toggle(100)" class="dd-header project-dd btn">(Unassigned)<i style="padding-left: 8px" class="fas fa-caret-down"></i></button>
 						<div class="dd-content">
 						</div>
 					</div>
@@ -34,17 +36,72 @@ $(function() {
 		projectList:""
 	}
 	
-	// // Project divs section for add/remove buttons
-	// build projectList template string
-	for (pid in UserRoles.projects){
-		UserRoles.templates.projectList += "<span>("+ pid + ") " + UserRoles.projects[pid].name + "</span>\n"
+	UserRoles.seedRoleDagButtons = function(projectDropdown){
+		pid = projectDropdown.html().split('(')[1].split(')')[0]
+		project = UserRoles.projects[String(pid)]
+		
+		// switching projects so unassign current role/dag
+		$(projectDropdown.closest('tr').find(".dd-header")[1]).html("(Unassigned)<i style='padding-left: 8px' class='fas fa-caret-down'></i>")
+		$(projectDropdown.closest('tr').find(".dd-header")[2]).html("(Unassigned)<i style='padding-left: 8px' class='fas fa-caret-down'></i>")
+		
+		// seed dd options
+		roleDiv = projectDropdown.closest('tr').find(".dd-content")[1]
+		dagDiv = projectDropdown.closest('tr').find(".dd-content")[2]
+		if (project) {
+			roleContent = "<span>(Unassigned)</span>"
+			for (i=0; i<project.roles.length; i++) {
+				roleContent += "\n<span>" + UserRoles.roles[project.roles[String(i)]] + "</span>"
+			}
+			$(roleDiv).html(roleContent)
+			
+			dagContent = "<span>(Unassigned)</span>"
+			for (i=0; i<project.dags.length; i++) {
+				dagContent += "\n<span>" + UserRoles.dags[project.dags[String(i)]] + "</span>"
+			}
+			$(dagDiv).html(dagContent)
+		} else {
+			$(roleDiv).html("<span>(Unassigned)</span>")
+			$(dagDiv).html("<span>(Unassigned)</span>")
+		}
 	}
 	
-	UserRoles.addProjectRow = function(){
+	UserRoles.addProjectRow = function(pid, role_id, group_id){
 		let projectRow = $(UserRoles.templates.projectRow)
 		// seed new row first dropdown with list of projects
 		projectRow.find(".dd-content").first().append(UserRoles.templates.projectList)
 		$("#projectsDiv").find("tbody").append(projectRow)
+		
+		// if pid/role/dag supplied set those
+		if (pid) {
+			// set project dropdown text and seed role/dag button options
+			$("#projectsDiv tr:last .dd-content:eq(0) span").each(function(i, element){
+				if ($(element).text().indexOf("("+pid+")") != -1) {
+					ddButton = $("#projectsDiv tr:last .dd-header:eq(0)")
+					ddButton.html($(element).text()+'<i style="padding-left: 8px" class="fas fa-caret-down">')
+					UserRoles.seedRoleDagButtons(ddButton)
+				}
+			})
+		}
+		if (role_id) {
+			role_name = UserRoles.roles[role_id]
+			$("#projectsDiv tr:last .dd-content:eq(1) span").each(function(i, element){
+				if (i==0) return
+				if ($(element).text() == role_name) {
+					ddButton = $("#projectsDiv tr:last .dd-header:eq(1)")
+					ddButton.html(role_name+'<i style="padding-left: 8px" class="fas fa-caret-down">')
+				}
+			})
+		}
+		if (group_id) {
+			group_name = UserRoles.dags[group_id]
+			$("#projectsDiv tr:last .dd-content:eq(2) span").each(function(i, element){
+				if (i==0) return
+				if ($(element).text() == group_name) {
+					ddButton = $("#projectsDiv tr:last .dd-header:eq(2)")
+					ddButton.html(group_name+'<i style="padding-left: 8px" class="fas fa-caret-down">')
+				}
+			})
+		}
 	}
 	
 	UserRoles.removeProjectRow = function(){
@@ -53,15 +110,21 @@ $(function() {
 		selectedRow.length > 0 ? selectedRow.first().remove() : $("#projectsDiv tbody tr").last().remove()
 	}
 	
-	// add role table rows using provided hidden #data
+	// // Project divs section for add/remove buttons
+	// build projectList template string
+	for (pid in UserRoles.projects){
+		UserRoles.templates.projectList += "<span>("+ pid + ") " + UserRoles.projects[pid].name + "</span>\n"
+	}
+	
+	// add roles
 	var falseCheckbox = "<input type=\"checkbox\">"
 	var trueCheckbox = "<input type=\"checkbox\" checked>"
 	for (var role in UserRoles.customRoles) {
 		let tableRow = `
 		<tr>
-			<td><button type=\"button\" class=\"btn\">${role}</button></td>
-			<td>${UserRoles.customRoles[role].active ? trueCheckbox : falseCheckbox}</td>
-			<td>${UserRoles.customRoles[role].external ? trueCheckbox : falseCheckbox}</td>
+			<td><button type=\"button\" class=\"btn roleButton\">${role}</button></td>
+			<td>${UserRoles.customRoles[role].active=="true" ? trueCheckbox : falseCheckbox}</td>
+			<td>${UserRoles.customRoles[role].external=="true" ? trueCheckbox : falseCheckbox}</td>
 		</tr>
 		`
 		$("#rolesDiv table tbody").append(tableRow)
@@ -76,7 +139,30 @@ $(function() {
 	// click handlers
 	$("#rolesDiv").on("click", "td:nth-child(1) button", function() {
 		// user clicked a role
-		console.log("role select")
+		$(".roleButton").removeClass("selected")
+		$(this).addClass('selected')
+		var role = UserRoles.customRoles[$(this).html()]
+		
+		console.log(role)
+		
+		// add/remove project access rows as necessary to match existing role access
+		$("#projectsDiv tbody").html("")
+		var roleProjects = JSON.parse(role.projects)
+		Object.keys(roleProjects).forEach(function(key){
+			if (UserRoles.projects[key]) {
+				if (UserRoles.projects[key] == null) {
+					UserRoles.addProjectRow(key)
+				} else {
+					var role_id = roleProjects[key].role ? null : roleProjects[key].role
+					var dag_id = roleProjects[key].dag ? null : roleProjects[key].dag
+					UserRoles.addProjectRow(key, role_id, dag_id)
+				}
+			}
+		})
+		
+		// toggle dashboard/report access items to match existing
+		
+		// console.log(role)
 	})
 	
 	// make report and dashboard items selectable
@@ -139,7 +225,3 @@ $(function() {
 		}
 	}
 })
-
-var UserRoles = {
-	
-}

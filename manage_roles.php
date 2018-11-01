@@ -1,7 +1,4 @@
 <?php
-header("Content-Type: application/json; charset=utf-8");
-echo $module->getData();
-exit;
 $html = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "html" . DIRECTORY_SEPARATOR . "base.html");
 
 // replace some contents in html head

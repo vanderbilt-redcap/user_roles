@@ -24,6 +24,18 @@ th, td {
 	border: 1px solid #ccc;
 }
 
+.roleButton:hover {
+	background-color: #e0ecff;
+}
+
+.roleButton:active {
+	background-color: #aacbff;
+}
+
+.roleButton.selected {
+	background-color: #c9ddff;
+}
+
 .fa-caret-down {
 	float: right;
 }
