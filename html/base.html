@@ -12,10 +12,10 @@
 		<p style="display: none" id="data">DATA</p>
 		<div style="border-style: solid; border-width: 2px;" id="rolesDiv">
 			<h3>User Roles</h3>
-			<button class="btn" type="button" onclick="">Create</button>
-			<button class="btn" type="button" onclick="">Delete</button>
-			<button class="btn" type="button" onclick="">Rename</button>
-			<button class="btn" type="button" onclick="">Save Changes</button>
+			<button class="btn" type="button" onclick="UserRoles.addRole()">Create</button>
+			<button style="display: none" class="btn" type="button" onclick="UserRoles.deleteRole()">Delete</button>
+			<button style="display: none" class="btn" type="button" onclick="UserRoles.renameRole()">Rename</button>
+			<button style="display: none" class="btn" type="button" onclick="UserRoles.saveChanges()">Save Changes</button>
 			<table>
 				<thead>
 					<tr>
