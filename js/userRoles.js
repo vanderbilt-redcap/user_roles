@@ -95,11 +95,45 @@ $(function() {
 	}
 	
 	UserRoles.renameRole = function() {
-		
+		$(".roleButton.selected").html("<input id='newRoleName' type='text'>")
+		$(".roleButton.selected input").focus()
+		$(".roleButton.selected input").focusout(function(e) {
+			var newName = $(".roleButton.selected input").val()
+			$(".roleButton.selected").html(newName)
+			UserRoles.customRoles[String($(".roleButton.selected").attr('record_id'))].name = newName
+			$("#rolesDiv button:eq(3)").show(100)
+		})
 	}
 	
 	UserRoles.saveChanges = function() {
-		$("#rolesDiv button:eq(3)").hide(100)
+		$("#rolesDiv button:eq(3)").html("Saving...")
+		
+		// send UserRoles.customRoles data to server so it can save records
+		var url = window.location.href.replace("manage_roles", "save_changes")
+		var data = JSON.stringify(UserRoles.customRoles)
+		// var data = UserRoles.customRoles
+		// var data = {test: "word", test2: "word2"}
+		// var data = '{test: "word", test2: "word2"}'
+		
+		$.ajax({
+			url: url,
+			type: "post",
+			data: {data: data},
+			// contentType: "multipart/form-data",
+			contentType: "application/json; charset=utf-8",
+			processData: false,
+			complete: function(response, mode) {
+				// console.log("response text: " + response.responseText)
+				// console.log("jqxhr mode: " + mode)
+				var text = (mode == "success") ? "Success!" : "Error - Try Again"
+				$("#rolesDiv button:eq(3)").html(text)
+				$("#rolesDiv button:eq(3)").delay(1000).hide(100, function() {
+					$("#rolesDiv button:eq(3)").html("Save Changes")
+				})
+			}
+		})
+		
+		console.log("data sent:" + data)
 	}
 	
 	UserRoles.seedRoleDagButtons = function(projectDropdown){
@@ -402,4 +436,14 @@ $(function() {
 		}
 	}
 	$("#rolesDiv button:eq(3)").hide(0)
+	
+	// if press enter, assume the user is trying to rename a role
+	$(document).keypress(function(e) {
+		if (e.which==13) {
+			var newName = $(".roleButton.selected input").val()
+			$(".roleButton.selected").html(newName)
+			UserRoles.customRoles[String($(".roleButton.selected").attr('record_id'))].name = newName || "New Role"
+			$("#rolesDiv button:eq(3)").show(100)
+		}
+	})
 })
