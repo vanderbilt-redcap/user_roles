@@ -108,12 +108,13 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		foreach ($records as $i => $a){
 			$record = $a[key($a)];
 			$newRole = array(
-				"projects" => $record["project_role"],
+				"name" => $record["role_name"],
+				"projects" => $record["project_access"],
 				"dashboards" => [],
 				"reports" => []
 			);
 			$newRole["active"] = $record["role_active"]==1 ? "true" : "false";
-			$newRole["external"] = $record["affiliation"]==1 ? "true" : "false";
+			$newRole["external"] = $record["role_external"]==1 ? "true" : "false";
 			$i = 0;
 			foreach ($record["tab_access"] as $val){
 				$i++;
@@ -125,7 +126,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 				if ($val==1) $newRole["reports"][] = (string)$i;
 			}
 			
-			$data["customRoles"][$record["role_name"]] = $newRole;
+			$data["customRoles"][$record["record_id"]] = $newRole;
 		}
 		
 		return json_encode($data);
