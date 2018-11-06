@@ -110,18 +110,12 @@ $(function() {
 		
 		// send UserRoles.customRoles data to server so it can save records
 		var url = window.location.href.replace("manage_roles", "save_changes")
-		var data = JSON.stringify(UserRoles.customRoles)
-		// var data = UserRoles.customRoles
-		// var data = {test: "word", test2: "word2"}
-		// var data = '{test: "word", test2: "word2"}'
+		var data = UserRoles.customRoles
 		
 		$.ajax({
 			url: url,
 			type: "post",
-			data: {data: data},
-			// contentType: "multipart/form-data",
-			contentType: "application/json; charset=utf-8",
-			processData: false,
+			data: data,
 			complete: function(response, mode) {
 				// console.log("response text: " + response.responseText)
 				// console.log("jqxhr mode: " + mode)
@@ -132,8 +126,6 @@ $(function() {
 				})
 			}
 		})
-		
-		console.log("data sent:" + data)
 	}
 	
 	UserRoles.seedRoleDagButtons = function(projectDropdown){
