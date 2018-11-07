@@ -148,17 +148,17 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		$project = new \Project($pid);
 		$eid = (int) $project->firstEventId;
 		
-		ob_start();
-		var_dump($_POST);
-		$txt = ob_get_contents();
-		ob_end_clean();
-		fwrite($this->log, "\nPOST:\n$txt\n\n");
+		// ob_start();
+		// var_dump($_POST);
+		// $txt = ob_get_contents();
+		// ob_end_clean();
+		// fwrite($this->log, "\nPOST:\n$txt\n\n");
 		
-		ob_start();
-		var_dump($_GET);
-		$txt = ob_get_contents();
-		ob_end_clean();
-		fwrite($this->log, "\nGET:\n$txt\n\n");
+		// ob_start();
+		// var_dump($_GET);
+		// $txt = ob_get_contents();
+		// ob_end_clean();
+		// fwrite($this->log, "\nGET:\n$txt\n\n");
 		
 		// exit;
 		
@@ -234,11 +234,11 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 			}
 		}
 		
-		ob_start();
-		var_dump($data);
-		$txt = ob_get_contents();
-		ob_end_clean();
-		fwrite($this->log, "data:\n$txt\n\n");
+		// ob_start();
+		// var_dump($data);
+		// $txt = ob_get_contents();
+		// ob_end_clean();
+		// fwrite($this->log, "data:\n$txt\n\n");
 		
 		$results = \REDCap::saveData($pid, 'array', $data);
 		

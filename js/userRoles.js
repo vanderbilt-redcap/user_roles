@@ -48,7 +48,7 @@ $(function() {
 				external: "false"
 			}
 			var flag = false
-			var index = 1
+			var index = 0
 			while (!flag) {
 				if (UserRoles.customRoles[index] == undefined) {
 					flag = true
@@ -88,6 +88,7 @@ $(function() {
 		// hide delete and rename buttons
 		$("#rolesDiv button:eq(1)").hide(100)
 		$("#rolesDiv button:eq(2)").hide(100)
+		$("#rolesDiv button:eq(3)").show(100)
 		
 		// remove project access table rows and untoggle report/dashboard items
 		$(".btn").removeClass("selected")
@@ -123,11 +124,11 @@ $(function() {
 			// }
 		// }
 		
-		console.log('data: ' + data)
+		// console.log('data: ' + data)
 		
-		jQuery.ajax({
+		jQuery.post({
 			url: url,
-			method: "POST",
+			// method: "POST",
 			data: data,
 			complete: function(response, mode) {
 				// console.log("response text: " + response.responseText)
@@ -269,10 +270,10 @@ $(function() {
 	}
 	
 	// add dashboard and report items
-	dashItems = UserRoles.dashboards.map(function(name, index) {return "<li><button dashboardid=\"" + index + "\" class=\"btn\" type=\"button\">" + name + "</button></li>"})
-	$("#dashboardsDiv ul").append(dashItems.join(''))
-	reportItems = UserRoles.reports.map(function(name, index) {return "<li><button reportid=\"" + index + "\" class=\"btn\" type=\"button\">" + name + "</button></li>"})
-	$("#reportsDiv ul").append(reportItems.join(''))
+	dashItems = UserRoles.dashboards.map(function(name, index) {return "<button dashboardid=\"" + index + "\" class=\"btn m-3\" type=\"button\">" + name + "</button>"})
+	$("#dashboardsDiv .list").append(dashItems.join(''))
+	reportItems = UserRoles.reports.map(function(name, index) {return "<button reportid=\"" + index + "\" class=\"btn m-3\" type=\"button\">" + name + "</button>"})
+	$("#reportsDiv .list").append(reportItems.join(''))
 	
 	/////////// click handlers ->
 	// when click on role buttons ->
@@ -358,8 +359,8 @@ $(function() {
 			}
 		}
 	}
-	$("#dashboardsDiv").on("click", "li button", function() {toggle(this, 'dashboard')})
-	$("#reportsDiv").on("click", "li button", function() {toggle(this, 'report')})
+	$("#dashboardsDiv").on("click", "button", function() {toggle(this, 'dashboard')})
+	$("#reportsDiv").on("click", "button", function() {toggle(this, 'report')})
 	$("#projectsDiv").on("click", "tbody tr", function(){
 		// untoggle all project table rows except newly selected
 		$("#projectsDiv tbody tr").removeClass('selected')

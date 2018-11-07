@@ -1,60 +1,104 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 	<head>
-		<meta charset="UTF-8">
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 		<link rel="stylesheet" href="STYLESHEET">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script type="text/javascript" src="MODULE_JS_FILE"></script>
 		<title>Custom User Roles</title>
 	</head>
-	<body>
+	<body class="container">
+		<!-- data -->
 		<p style="display: none" id="data">DATA</p>
-		<div style="border-style: solid; border-width: 2px;" id="rolesDiv">
-			<h3>User Roles</h3>
-			<button class="btn" type="button" onclick="UserRoles.addRole()">Create</button>
-			<button style="display: none" class="btn" type="button" onclick="UserRoles.deleteRole()">Delete</button>
-			<button style="display: none" class="btn" type="button" onclick="UserRoles.renameRole()">Rename</button>
-			<button style="display: none" class="btn" type="button" onclick="UserRoles.saveChanges()">Save Changes</button>
-			<table>
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Active</th>
-						<th>External</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
+		
+		<!-- roles -->
+		<div id="rolesDiv" class="card mt-5">
+			<!-- top header -->
+			<div class="row m-3">
+				<div class="col text-center">
+					<h3>Custom User Roles</h3>
+				</div>
+			</div>
+			<div class="card-body">
+				<button class="btn m-2" type="button" onclick="UserRoles.addRole()">Create</button>
+				<button style="display: none" class="btn m-2" type="button" onclick="UserRoles.deleteRole()">Delete</button>
+				<button style="display: none" class="btn m-2" type="button" onclick="UserRoles.renameRole()">Rename</button>
+				<button style="display: none" class="btn m-2" type="button" onclick="UserRoles.saveChanges()">Save Changes</button>
+				<div class="row">
+					<p class="col ml-2">Select a role to make changes</p>
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col">Active</th>
+							<th scope="col">External</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
 		</div>
-		<div style="border-style: solid; border-width: 2px;" id="projectsDiv">
-			<h3>Project Access</h3>
-			<button type="button" class="btn" onclick="UserRoles.addProjectRow()">Add</button>
-			<button type="button" class="btn" onclick="UserRoles.removeProjectRow()">Remove</button>
-			<table>
-				<thead>
-					<tr>
-						<th>PID</th>
-						<th>Project Title</th>
-						<th>Roles</th>
-						<th>Data Access Groups</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-			<!-- <span id="noProjectsSpan">(No projects defined)</span> -->
+		
+		<!-- projects -->
+		<div id="projectsDiv" class="card mt-5">
+			<div class="row m-3">
+				<div class="col text-center">
+					<h3>Project Access</h3>
+				</div>
+			</div>
+			<div class="card-body">
+				<button type="button" class="btn m-2" onclick="UserRoles.addProjectRow()">Add</button>
+				<button type="button" class="btn m-2" onclick="UserRoles.removeProjectRow()">Remove</button>
+				<div class="row">
+					<p class="col ml-2">After selecting a role, add or remove rows to grant access to projects, roles, or data access groups</p>
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">PID</th>
+							<th scope="col">Project Title</th>
+							<th scope="col">Roles</th>
+							<th scope="col">Data Access Groups</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
 		</div>
-		<div style="border-style: solid; border-width: 2px;" id="dashboardsDiv">
-			<h3>Dashboard Access</h3>
-			<ul>
-			</ul>
+		
+		<!-- dashboards -->
+		<div id="dashboardsDiv" class="card mt-5">
+			<div class="row m-3">
+				<div class="col text-center">
+					<h3>Dashboard Access</h3>
+				</div>
+			</div>
+			<div class='list'>
+			</div>
 		</div>
-		<div style="border-style: solid; border-width: 2px;" id="reportsDiv">
-			<h3>Report Access</h3>
-			<ul>
-			</ul>
+		
+		<!-- reports -->
+		<div id="reportsDiv" class="card my-5">
+			<div class="row m-3">
+				<div class="col text-center">
+					<h3>Report Access</h3>
+				</div>
+			</div>
+			<div class='list'>
+			</div>
 		</div>
+		
+		<!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+		<script  src="https://code.jquery.com/jquery-3.3.1.js"
+  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+  crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="MODULE_JS_FILE"></script>
 	</body>
 </html>
