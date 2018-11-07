@@ -112,22 +112,9 @@ $(function() {
 		var url = window.location.href.replace("manage_roles", "save_changes")
 		var data = UserRoles.customRoles
 		
-		// var data = {
-			// "1": {
-				// name: "Role A",
-				// active: true,
-				// external: false,
-				// dashboards: ['1', '11'],
-				// reports: ['1', '10'],
-				// projects: {'1': {'role': '1', 'dag': null}}
-			// }
-		// }
-		
-		console.log('data: ' + data)
-		
-		jQuery.ajax({
+		$.ajax({
 			url: url,
-			method: "POST",
+			type: "post",
 			data: data,
 			complete: function(response, mode) {
 				// console.log("response text: " + response.responseText)

@@ -148,6 +148,20 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		$project = new \Project($pid);
 		$eid = (int) $project->firstEventId;
 		
+		ob_start();
+		var_dump($_POST);
+		$txt = ob_get_contents();
+		ob_end_clean();
+		fwrite($this->log, "\nPOST:\n$txt\n\n");
+		
+		ob_start();
+		var_dump($_GET);
+		$txt = ob_get_contents();
+		ob_end_clean();
+		fwrite($this->log, "\nGET:\n$txt\n\n");
+		
+		// exit;
+		
 		// count how many dashboard items and report items there are
 		// $sampleDashboardsField = \REDCap::getData(['project_id' => (string) $pid, 'records' => '1', 'fields' => 'tab_access']);
 		// $sampleReportsField = \REDCap::getData(['project_id' => (string) $pid, 'records' => '1', 'fields' => 'tab_access_2']);
@@ -164,7 +178,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		// $data[4][40]['role_name'] = "test";
 		// $data[4][40]['role_active'] = true;
 		// $data[4][40]['role_external'] = false;
-		// $data[4][40]["my_first_instrument_complete"] = "2";
+		// $data[4][40]["user_roles_complete"] = "2";
 		// $data[4][40]['project_access'] = '{"1":{"role":"2","dag":null},"3":{"role":null,"dag":null},"5":{"role":null,"dag":null}}';
 		// $data[4][40]['tab_access'] = [];
 		// $data[4][40]['tab_access'][0] = "1";
@@ -197,11 +211,11 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 			$data[$rid][$eid]["record_id"] = (string) $rid;
 			$data[$rid][$eid]["role_name"] = preg_replace('/[[:cntrl:]]/', '', $record['name']);
 			$data[$rid][$eid]["role_active"] = $record['active']==="true" ? "1" : "0";
-			$data[$rid][$eid]["role_external"] = $record['active']==="true" ? "1" : "0";
+			$data[$rid][$eid]["role_external"] = $record['external']==="true" ? "1" : "0";
 			$data[$rid][$eid]["project_access"] = json_encode($record['projects']);
 			$data[$rid][$eid]["tab_access"] = [];
 			$data[$rid][$eid]["tab_access_2"] = [];
-			$data[$rid][$eid]["my_first_instrument_complete"] = "2";
+			$data[$rid][$eid]["user_roles_complete"] = "2";
 			
 			for ($i = 0; $i < $dashboardsCount; $i++) {
 				if (in_array($i+1, $record['dashboards'])) {
