@@ -6,7 +6,7 @@ class UserRoles extends \ExternalModules\AbstractExternalModule {
 		parent::__construct();
 		
 		// create log that is in redcapversioned/ExternalModules
-		$this->log = fopen("log.txt", "w");
+		$this->log = fopen("/tmp/user-roles-module-log.txt", "w");
 		fwrite($this->log, "starting log...\n");
 		
 		$this->dev = true;
